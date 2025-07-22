@@ -78,9 +78,13 @@ If morphine is a single step on a staircase, heroin takes you up 30 to 50 steps 
 - **Illicit:** Made illegally, sold as powder or counterfeit pills
 
 ## 📈 Fentanyl Influx
-- 27,000+ lbs seized in 2024
-- 115M counterfeit pills seized in 2023
-- 2023 overdose deaths: ~72,000 of 103,000 total
+
+2023: Approximately 500lbs in 115M counterfeit pills seized.
+2024: Over 27,000 lbs of raw, powdered fentanyl seized.
+
+Takeaway: 27,000 lbs (2024) vs. 507 lbs (2023 pills) = over 53× more fentanyl seized in 2024 compared to the pill-equivalent fentanyl from 2023.
+
+This massive spike in bulk powder seizures from 2023 to 2024 suggests a shift from counterfeit pill seizures to larger quantities of raw fentanyl being intercepted.
 
 ### Summary Table
 | Topic           | Key Facts                                     |
