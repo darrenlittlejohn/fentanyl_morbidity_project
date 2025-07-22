@@ -63,8 +63,10 @@ Fentanyl is a fully synthetic opioid analgesic, created in laboratories (no natu
 ## 💪 Potency Levels
 - 50–100× stronger than morphine
 - 30–50× stronger than heroin
-- Lethal dose: ≈2 mg
+- Lethal dose: ≈2 mg (about the same as a few grains of salt)
 - Carfentanil: ~100× fentanyl, or 10,000× morphine
+
+If morphine is a single step on a staircase, heroin takes you up 30 to 50 steps in a single stride. Fentanyl doesn’t just climb the stairs — it puts you atop a skyscraper, dangerously high above the ground. Carfentanil is not even in the building; it puts you above the skyscrapers into deep space, where survival is often impossible.
 
 ## ⚠️ When Is It Dangerous?
 - Even trace amounts can cause fatal overdose
