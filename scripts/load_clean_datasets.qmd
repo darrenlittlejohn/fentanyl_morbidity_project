@@ -1,0 +1,542 @@
+---
+
+
+---
+
+```{r}
+# Load required libraries
+library(dplyr)
+library(janitor)
+library(stringr)
+library(readr)
+```
+
+```{r}
+colnames(df)  # Must return non-null, non-empty vector
+# Cleaning Step 1: Clean column names
+  df <- df %>%
+    clean_names()
+  
+  # Load janitor package
+  library(janitor)
+
+  # Clean the column names
+mortality_data <- mortality_data %>%
+  clean_names()
+
+# Remove empty rows and columns
+mortality_data <- mortality_data %>%
+  remove_empty(which = c("rows", "cols"))
+head(mortality_data)
+
+library(stringr)  # for str_remove_all
+
+# Strip outer quotes from all character columns
+mortality_data <- mortality_data %>%
+  mutate(across(where(is.character), ~ str_remove_all(., '^"|"$')))
+
+library(stringr)
+
+# Count how many quoted values exist before cleaning
+quoted_before <- mortality_data %>%
+  summarise(across(where(is.character), ~ sum(str_detect(., '^"|"$'))))
+
+# Strip outer quotes from all character columns
+mortality_data <- mortality_data %>%
+  mutate(across(where(is.character), ~ str_remove_all(., '^"|"$')))
+
+# Count how many quoted values remain after cleaning
+quoted_after <- mortality_data %>%
+  summarise(across(where(is.character), ~ sum(str_detect(., '^"|"$'))))
+
+# See the number of affected values before and after
+quoted_before
+quoted_after
+```
+
+```{r}
+# Count non-standard missing values BEFORE
+missing_before <- mortality_data %>%
+  summarise(across(where(is.character), ~ sum(. %in% c("", "NA", "NaN", " "))))
+
+missing_before
+
+dim(mortality_data)  # Check if rows/columns were removed
+```
+
+```{r}
+# Get all distinct values (including blanks/NA)  
+distinct_notes <- mortality_data %>%  
+  distinct(notes) %>%  
+  arrange(notes)  
+```
+
+```{r}
+library(dplyr)
+
+# Clean notes and get distinct values
+distinct_notes <- mortality_data %>%
+  mutate(
+    notes = trimws(notes),               # Remove leading/trailing spaces
+    notes = na_if(notes, ""),            # Convert empty strings "" to NA
+    notes = ifelse(grepl("^\\s*$", notes), NA, notes)  # Convert whitespace-only to NA
+  ) %>%
+  distinct(notes) %>%                    # Get unique values
+  arrange(notes)                         # Sort A-Z with NA last
+
+# Print results
+print(distinct_notes)
+```
+
+```{print(distinct_notes)}
+```
+
+```{r}
+colSums(is.na(mortality_data))
+```
+
+```{r}
+str(mortality_data)
+```
+
+```{r}
+# Should only return 0 or higher for each column
+na_summary <- colSums(is.na(mortality_data))
+na_summary
+
+```
+
+```{r}
+#Drop notes column - 95% NA
+mortality_data <- mortality_data %>%
+  select(-notes)
+
+```
+
+```{# Load required packages}
+library(dplyr)
+library(tidyr)
+
+# View rows with any NA values
+rows_with_na <- mortality_data %>%
+  filter(if_any(everything(), ~ is.na(.)))
+
+str(mor)
+```
+
+```{r}
+# Step 8.2 — Convert the column to numeric
+mortality_data <- mortality_data %>%
+  mutate(percent_of_total_deaths = as.numeric(percent_of_total_deaths))
+
+```
+
+```{r}
+# Step 8.3 — Divide by 100 to get the proportion (0.1% → 0.001)
+mortality_data <- mortality_data %>%
+  mutate(percent_of_total_deaths = percent_of_total_deaths / 100)
+
+```
+
+```{r}
+# Step 8.3 — Divide by 100 to get the proportion (0.1% → 0.001)
+mortality_data <- mortality_data %>%
+  mutate(percent_of_total_deaths = percent_of_total_deaths / 100)
+
+```
+
+```{r}
+nrow(rows_with_na)
+nrow(mortality_data)
+print(nrow(rows_with_na))
+print(nrow(mortality_data))
+
+
+```
+
+```{r}
+cat("Rows with missing data removed:", nrow(rows_with_na), "\n")
+cat("Remaining rows after cleaning:", nrow(mortality_data), "\n")
+
+```
+#Clean Mortality Data
+library(janitor)  
+# library      -> Function to load an R package.
+# (janitor)    -> The name of the package being loaded, which contains data-cleaning tools like clean_names().
+
+mortality_data <- mortality_data %>% clean_names()
+# mortality_data  -> The data frame being modified.
+# <-              -> Assignment operator, stores the output back into mortality_data.
+# mortality_data  -> Existing data frame being passed through the pipe.
+# %>%             -> Pipe operator from dplyr, sends the data frame as input to the next function.
+# clean_names()   -> Function from janitor package; standardizes all column names (lowercase, underscores).
+
+colnames(mortality_data)        # View cleaned names
+# colnames       -> Function that retrieves the column names of the data frame.
+# (mortality_data) -> The data frame whose column names will be displayed.
+# # View cleaned names -> Comment explaining the purpose of this line.
+
+unique(mortality_data$census_region)  # Check regions
+# unique         -> Function that returns all unique (distinct) values.
+# (mortality_data$census_region) -> Accesses the 'census_region' column of mortality_data and lists unique entries.
+# # Check regions -> Comment describing this line's purpose.
+
+unique(mortality_data$state)    # Check states
+# unique         -> Function that returns all unique (distinct) values.
+# (mortality_data$state) -> Accesses the 'state' column of mortality_data and lists unique entries.
+# # Check states -> Comment describing this line's purpose.
+```{r}
+
+```
+
+
+unique(mortality_data$census_region) 
+unique(mortality_data$state)
+
+### Load prescribers_by_geo dataframe
+
+# This code reads the Medicare Part D Prescribers 2023 dataset into R as a tibble.
+
+prescribers_by_geo <- read_csv(                              # Use read_csv() to load a CSV file
+  "C:/Users/Darren/Dev/fentanyl/data/raw/medicare_prescribers_by_geo_drug/MUP_DPR_RY25_P04_V10_DY23_Geo.csv", # File path
+  col_names = TRUE,                                          # Use the first row as column names
+  na = c("", "NA", "NaN"),                                   # Treat empty strings, "NA", and "NaN" as missing values
+  show_col_types = FALSE                                     # Do not print column type information in the console
+)
+
+# View first 10 rows and structure of the dataset
+head(prescribers_by_geo, 10)    # Preview first 10 rows
+str(prescribers_by_geo)         # View column structure and data types
+
+# --- Clean prescribers_by_geo dataframe ---
+
+# 1. Standardize column names
+library(janitor)
+prescribers_by_geo <- prescribers_by_geo %>% clean_names()
+
+# 2. Remove empty rows and columns
+prescribers_by_geo <- prescribers_by_geo %>% remove_empty(which = c("rows", "cols"))
+
+# 3. Trim whitespace from all character columns
+library(dplyr)
+library(stringr)
+prescribers_by_geo <- prescribers_by_geo %>%
+  mutate(across(where(is.character), ~ str_trim(.)))
+
+# 4. Replace empty strings with NA
+prescribers_by_geo <- prescribers_by_geo %>%
+  mutate(across(where(is.character), ~ na_if(.,"")))
+
+# 5. Summarize missing values by column
+colSums(is.na(prescribers_by_geo))
+
+# --- Remove columns with excessive missing values ---
+prescribers_by_geo <- prescribers_by_geo %>%
+  select(-ge65_sprsn_flag, -ge65_bene_sprsn_flag)
+  
+# --- Confirm missing values after removal ---
+colSums(is.na(prescribers_by_geo))
+ --- Replace remaining NA values in numeric columns with 0 (optional) ---
+prescribers_by_geo <- prescribers_by_geo %>%
+  mutate(across(where(is.numeric), ~ ifelse(is.na(.), 0, .)))
+  
+  # Check all column names
+colnames(prescribers_by_geo)
+
+# Remove high-NA columns if they exist
+prescribers_by_geo <- prescribers_by_geo %>%
+  select(-any_of(c("ge65_sprsn_flag", "ge65_bene_sprsn_flag")))
+
+
+# 6. Preview the first 10 rows
+head(prescribers_by_geo, 10)
+
+
+# --- Clean prescribers_by_geo dataset ---
+library(dplyr)
+library(janitor)
+
+# Step 1: Clean column names (convert to lowercase + underscores)
+prescribers_by_geo <- prescribers_by_geo %>% 
+  clean_names()
+
+# Step 2: Remove empty strings and convert them to NA
+prescribers_by_geo <- prescribers_by_geo %>%
+  mutate(across(where(is.character), ~ na_if(., "")))
+
+# Step 3: Remove high-NA columns if they exist
+prescribers_by_geo <- prescribers_by_geo %>%
+  select(-any_of(c("ge65_sprsn_flag", "ge65_bene_sprsn_flag")))
+
+# Step 4: Summarize missing values
+colSums(is.na(prescribers_by_geo))
+
+# Step 5: Preview first rows and structure
+head(prescribers_by_geo, 10)
+str(prescribers_by_geo)
+
+
+
+### Load prescribers_by_geo dataset
+prescribers_by_geo <- read_csv(
+  "C:/Users/Darren/Dev/fentanyl/data/raw/medicare_prescribers_by_geo_drug/MUP_DPR_RY25_P04_V10_DY23_Geo.csv",
+  na = c("", "NA", "NaN"),
+  show_col_types = FALSE
+)
+
+# Clean column names
+library(janitor)
+prescribers_by_geo <- prescribers_by_geo %>% clean_names()
+
+# Preview structure
+head(prescribers_by_geo, 10)
+str(prescribers_by_geo)
+
+# --- Clean prescribers_by_geo dataset ---
+
+# Step 1: Convert empty strings to NA
+prescribers_by_geo <- prescribers_by_geo %>%
+  mutate(across(where(is.character), ~ na_if(.,"")))
+
+# Step 2: Check missing values by column
+colSums(is.na(prescribers_by_geo))
+
+# Step 3: Remove columns with excessive NA values (if they exist)
+prescribers_by_geo <- prescribers_by_geo %>%
+  select(-any_of(c("ge65_sprsn_flag", "ge65_bene_sprsn_flag")))
+
+# Step 4: Preview cleaned data
+head(prescribers_by_geo, 10)
+
+# Confirm current column names
+colnames(prescribers_by_geo)
+
+# Summarize remaining missing values
+colSums(is.na(prescribers_by_geo))
+
+# --- Clean high-NA columns in prescribers_by_geo ---
+prescribers_by_geo <- prescribers_by_geo %>%
+  select(
+    -prscrbr_geo_cd,    # 3608 NAs
+    -tot_benes,         # 21,596 NAs
+    -ge65_tot_clms,     # 21,063 NAs
+    -ge65_tot_30day_fills, 
+    -ge65_tot_drug_cst, 
+    -ge65_tot_benes     # 48,848 NAs
+  )
+
+# --- Verify remaining missing values ---
+colSums(is.na(prescribers_by_geo))
+
+
+### --- Load state-level NCHS overdose data and clean column names ---
+nchs_overdose <- read_csv(
+  "C:/Users/Darren/Dev/fentanyl/data/raw/cdc_nchs_VSRR_Provisional_Drug_Overdose_Death_Counts.csv", # File path to NCHS state-level data
+  na = c("", "NA", "NaN"),      # Specify missing value representations
+  show_col_types = FALSE        # Suppress column type output
+) %>%
+  janitor::clean_names()        # Standardize column names
+  
+
+# --- Inspect unique state values to ensure join compatibility ---
+unique(nchs_overdose$state)    # List all unique state names in the NCHS data
+
+
+#### --- Remove rows with missing data_value ---
+nchs_overdose <- nchs_overdose[!is.na(nchs_overdose$data_value), ]
+
+# --- Remove predicted_value column ---
+nchs_overdose <- nchs_overdose %>% select(-predicted_value)
+
+
+# --- Check for extra or mismatched state names ---
+setdiff(unique(nchs_overdose$state), unique(mortality_data$state))   # States in NCHS but not mortality
+setdiff(unique(mortality_data$state), unique(nchs_overdose$state))   # States in mortality but not NCHS
+
+#### --- Create mapping for state names and abbreviations ---
+state_abbrev <- data.frame(
+  state_name = c("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+                 "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia",
+                 "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+                 "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+                 "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
+                 "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota",
+                 "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina",
+                 "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia",
+                 "Washington", "West Virginia", "Wisconsin", "Wyoming"),
+  state_abbrev = c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI",
+                   "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN",
+                   "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
+                   "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA",
+                   "WV", "WI", "WY")
+)
+
+# --- Merge abbreviations into mortality_data ---
+mortality_data <- mortality_data %>%
+  left_join(state_abbrev, by = c("state" = "state_name"))
+
+
+# --- Preview first few rows for data verification ---
+head(nchs_overdose, 10)        # Show first 10 rows of the cleaned dataset
+
+# --- Summarize missing values by column ---
+colSums(is.na(nchs_overdose))  # Count NAs in each column
+
+###New Mortality Dataset###
+# --- Load the 2023 Mortality Data (fixed-width format) ---
+library(vroom)        # Efficient reading of large files
+library(janitor)      # Clean column names
+
+mortality_raw <- vroom::vroom_fwf(
+  file = "C:/Users/Darren/Dev/fentanyl/data/raw/mort2023us/VS23MORT.DUSMCPUB_r20241030",
+  col_positions = fwf_empty("C:/Users/Darren/Dev/fentanyl/data/raw/mort2023us/VS23MORT.DUSMCPUB_r20241030"),
+  col_types = cols(.default = "c")
+) %>% 
+  janitor::clean_names()
+
+# --- Preview first rows and column names ---
+head(mortality_raw, 10)
+colnames(mortality_raw)
+
+
+###
+
+# --- Step 1: Define official column names based on the Mortality Data Dictionary ---
+# Each name corresponds to the original placeholder column (x1, x2, ..., x30).
+column_names <- c(
+  "resident_status",           # x1: Resident status of the decedent
+  "education_1989",            # x2: Education level (1989 revision)
+  "education_2003",            # x3: Education level (2003 revision)
+  "month_of_death",            # x4: Month of death
+  "sex",                       # x5: Sex of the decedent
+  "age_type",                  # x6: Age type code (units of age)
+  "age",                       # x7: Age value
+  "place_of_death",            # x8: Place of death
+  "marital_status",            # x9: Marital status of decedent
+  "day_of_week_of_death",      # x10: Day of week of death
+  "current_data_year",         # x11: Year of death
+  "injury_at_work",            # x12: Injury at work flag
+  "manner_of_death",           # x13: Manner of death (e.g., natural, accident)
+  "method_of_disposition",     # x14: Method of body disposition (e.g., burial)
+  "autopsy",                   # x15: Autopsy performed
+  "place_of_injury",           # x16: Place of injury occurrence
+  "icd_code",                  # x17: ICD-10 underlying cause of death
+  "record_condition_1",        # x18: Multiple cause condition 1
+  "record_condition_2",        # x19: Multiple cause condition 2
+  "record_condition_3",        # x20: Multiple cause condition 3
+  "record_condition_4",        # x21: Multiple cause condition 4
+  "record_condition_5",        # x22: Multiple cause condition 5
+  "record_condition_6",        # x23: Multiple cause condition 6
+  "record_condition_7",        # x24: Multiple cause condition 7
+  "record_condition_8",        # x25: Multiple cause condition 8
+  "record_condition_9",        # x26: Multiple cause condition 9
+  "record_condition_10",       # x27: Multiple cause condition 10
+  "record_condition_11",       # x28: Multiple cause condition 11
+  "record_condition_12",       # x29: Multiple cause condition 12
+  "record_condition_13"        # x30: Multiple cause condition 13
+)
+# --- Step 2: Assign these names to the raw dataset ---
+colnames(mortality_raw) <- column_names
+# --- Step 3: Verify that the columns were renamed correctly ---
+# Display first 10 rows and column names
+head(mortality_raw, 10)    # Shows sample data with updated column names
+colnames(mortality_raw)    # Verify column name mapping
+
+###
+
+library(dplyr)
+
+# Convert all ICD codes to uppercase for consistency
+mortality_clean <- mortality_raw %>%
+  mutate(across(c(icd_code, starts_with("record_condition")), ~ toupper(trimws(.))))
+
+# Filter for fentanyl-related deaths
+fentanyl_mortality <- mortality_clean %>%
+  filter(
+    grepl("^T40\\.4", icd_code) |
+    if_any(starts_with("record_condition"), ~ grepl("^T40\\.4", .))
+  )
+
+# Preview filtered data
+head(fentanyl_mortality, 10)
+
+# Number of fentanyl-related death records
+nrow(fentanyl_mortality)
+
+
+###
+# Filter for fentanyl-related deaths based on ICD-10 code T40.4
+fentanyl_mortality <- mortality_clean %>%
+  filter(grepl("^T40\\.4", icd_code))
+
+# Preview
+head(fentanyl_mortality, 10)
+
+# Count fentanyl-related deaths
+nrow(fentanyl_mortality)
+
+###
+# Show all unique T40 series ICD codes
+unique_icd_t40 <- unique(mortality_clean$icd_code[grepl("^T40", mortality_clean$icd_code)])
+unique_icd_t40
+
+###
+# Find all unique patterns in icd_code
+head(unique(mortality_raw$icd_code), 100)
+
+# Find all unique patterns in the record_condition_* columns
+for (i in 1:13) {
+  print(head(unique(mortality_raw[[paste0("record_condition_", i)]]), 20))
+}
+
+
+###
+# Check any codes starting with 'T' to see available toxicology codes
+for (i in c("icd_code", paste0("record_condition_", 1:13))) {
+  print(unique(grep("^T", mortality_raw[[i]], value = TRUE)))
+}
+
+###
+# Correct filter for fentanyl-related deaths
+fentanyl_mortality <- mortality_raw %>%
+  filter(
+    grepl("^T404$", icd_code) |
+    if_any(starts_with("record_condition"), ~ grepl("^T404$", .))
+  )
+
+# Preview
+head(fentanyl_mortality, 10)
+
+# Count
+nrow(fentanyl_mortality)
+
+
+###
+# --- Aggregate total fentanyl deaths (2018–2023) ---
+national_fentanyl_deaths <- fentanyl_mortality %>%
+  group_by(current_data_year) %>%      # Group by year
+  summarise(total_deaths = n(), .groups = "drop") %>%
+  arrange(current_data_year)
+
+# --- Preview ---
+national_fentanyl_deaths
+
+###
+library(dplyr)
+library(stringr)
+
+# --- Extract year from month_of_death column ---
+fentanyl_mortality <- fentanyl_mortality %>%
+  mutate(year = str_extract(month_of_death, "\\b(20[1-2][0-9])\\b"))  # Finds 2010-2029 patterns
+
+# --- Aggregate national totals by year ---
+national_fentanyl_deaths <- fentanyl_mortality %>%
+  filter(!is.na(year)) %>%
+  group_by(year) %>%
+  summarise(total_deaths = n(), .groups = "drop") %>%
+  arrange(year)
+
+# --- Preview ---
+national_fentanyl_deaths
+
+
