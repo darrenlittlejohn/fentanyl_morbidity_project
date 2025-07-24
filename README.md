@@ -76,6 +76,7 @@ Since the mortality data covers all ages, I decided to filter for seniors 50+ in
 ## Figures
 
 
+
 **Figure 1: Fentanyl Prescriptions vs. All-Age Deaths**  
 ![Figure 1](scatter_fentanyl_vs_deaths.png)  
 This scatter plot shows the correlation between fentanyl prescriptions and all-age fentanyl-related deaths by state in 2023.  
