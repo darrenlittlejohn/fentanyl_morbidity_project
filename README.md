@@ -13,7 +13,7 @@ The prescription data used in this analysis is sourced from Medicare Part D pres
 Most fentanyl overdose deaths, according to CDC data, occur among younger adults (25–54) due to illicit fentanyl. Seniors may typically have lower overdose death rates from illicit fentanyl, which refined the question to apply specifically to seniors 65+.
 
 ## Central Question
-**Is there a relationship between how much fentanyl is being prescribed to and the number of deaths by fentanyl overdose? - Is there a difference in regions, states, counties, or prescribers?**
+**Is there a relationship between how much fentanyl is being prescribed to and the number of deaths by fentanyl overdose? Is there a difference in age groups or states?**
 
 This is not just an academic exercise or a technical showcase. This is about making sense of a tragedy that is unfolding all around us, and about providing something useful to others who are searching for answers—whether they are policymakers, public health workers, or people who have lost someone, as I have.
 
