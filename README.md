@@ -1,6 +1,6 @@
-# US Fentanyl Morbidity by USA, State and County
+# Total US and State-by-State Fentanyl Morbidity by Frequencey of Prescriptions
 
-Two people I cared about died of fentanyl. This project is personal. The opioid crisis is not an abstract problem—it is a devastating reality that has touched my life and the lives of many people I know. Losing friends to fentanyl overdoses has changed the way I see this epidemic. I’ve been in recovery from addictions since 1984–1994 and 1997–current in 2025.
+Two people I cared about died of fentanyl within the last 12 months. This project is personal. The opioid crisis is not an abstract problem—it is a devastating reality that has touched my life and the lives of many people I know. Losing friends to fentanyl overdoses has changed the way I see this epidemic. I’ve been in recovery from addictions since 1984–1994 and 1997–current in 2025.
 
 Since 2007 I’ve blogged, podcasted and written several books to help those suffering from addictions. It is with this background that the questions around fentanyl began to gnaw at my inner researcher. A search of publicly available datasets with fentanyl data yielded valid, well documented data sources to explore on this issue. Upon exploring of A,B,C datasets, the immediate question that arose is part one of this study. But let's frame up the context.
 
